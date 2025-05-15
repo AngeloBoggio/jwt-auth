@@ -21,10 +21,14 @@ const requireRole = (requiredRoles) => {
             // Use unknown first, then cast to CustomJwtPayload
             const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
             if (!decoded.role) {
-                return res.status(403).json({ error: "Access denied: Role is missing in JWT" });
+                return res
+                    .status(403)
+                    .json({ error: "Access denied: Role is missing in JWT" });
             }
             if (!requiredRoles.includes(decoded.role)) {
-                return res.status(403).json({ error: "Access denied: Insufficient permissions" });
+                return res
+                    .status(403)
+                    .json({ error: "Access denied: Insufficient permissions" });
             }
             next();
         }
