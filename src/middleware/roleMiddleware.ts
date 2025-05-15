@@ -8,8 +8,8 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 const JWT_SECRET = process.env.JWT_SECRET;
-if(!JWT_SECRET) {
-	throw new Error("JWT_SECRET is not defined in environment variables");
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
 }
 
 // Role-based Access Control Middleware
@@ -25,14 +25,21 @@ export const requireRole = (requiredRoles: string[]) => {
 
     try {
       // Use unknown first, then cast to CustomJwtPayload
-      const decoded = jwt.verify(token, JWT_SECRET) as unknown as CustomJwtPayload;
+      const decoded = jwt.verify(
+        token,
+        JWT_SECRET
+      ) as unknown as CustomJwtPayload;
 
       if (!decoded.role) {
-        return res.status(403).json({ error: "Access denied: Role is missing in JWT" });
+        return res
+          .status(403)
+          .json({ error: "Access denied: Role is missing in JWT" });
       }
 
       if (!requiredRoles.includes(decoded.role)) {
-        return res.status(403).json({ error: "Access denied: Insufficient permissions" });
+        return res
+          .status(403)
+          .json({ error: "Access denied: Insufficient permissions" });
       }
 
       next();
@@ -41,4 +48,3 @@ export const requireRole = (requiredRoles: string[]) => {
     }
   };
 };
-
