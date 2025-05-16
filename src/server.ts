@@ -24,6 +24,7 @@ app.use(
 );
 
 const PORT = parseInt(process.env.PORT || "8000", 10);
+console.log(`${PORT}`);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

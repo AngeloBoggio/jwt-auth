@@ -17,6 +17,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Something went wrong" });
 });
 const PORT = parseInt(process.env.PORT || "8000", 10);
+console.log(`${PORT}`);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

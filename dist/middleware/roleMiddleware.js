@@ -14,26 +14,30 @@ const requireRole = (requiredRoles) => {
     return (req, res, next) => {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            return res.status(401).json({ error: "Authorization header is missing" });
+            res.status(401).json({ error: "Authorization header is missing" });
+            return;
         }
         const token = authHeader.split(" ")[1];
         try {
             // Use unknown first, then cast to CustomJwtPayload
             const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
             if (!decoded.role) {
-                return res
+                res
                     .status(403)
                     .json({ error: "Access denied: Role is missing in JWT" });
+                return;
             }
             if (!requiredRoles.includes(decoded.role)) {
-                return res
+                res
                     .status(403)
                     .json({ error: "Access denied: Insufficient permissions" });
+                return;
             }
             next();
         }
         catch (error) {
-            return res.status(403).json({ error: "Invalid or expired token" });
+            res.status(403).json({ error: "Invalid or expired token" });
+            return;
         }
     };
 };

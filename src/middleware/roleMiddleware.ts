@@ -1,5 +1,5 @@
 // middleware/roleMiddleware.ts
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 // Define your JWT Payload type
@@ -13,12 +13,13 @@ if (!JWT_SECRET) {
 }
 
 // Role-based Access Control Middleware
-export const requireRole = (requiredRoles: string[]) => {
+export const requireRole = (requiredRoles: string[]): RequestHandler => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return res.status(401).json({ error: "Authorization header is missing" });
+      res.status(401).json({ error: "Authorization header is missing" });
+      return;
     }
 
     const token = authHeader.split(" ")[1];
@@ -31,20 +32,23 @@ export const requireRole = (requiredRoles: string[]) => {
       ) as unknown as CustomJwtPayload;
 
       if (!decoded.role) {
-        return res
+        res
           .status(403)
           .json({ error: "Access denied: Role is missing in JWT" });
+        return;
       }
 
       if (!requiredRoles.includes(decoded.role)) {
-        return res
+        res
           .status(403)
           .json({ error: "Access denied: Insufficient permissions" });
+        return;
       }
 
       next();
     } catch (error) {
-      return res.status(403).json({ error: "Invalid or expired token" });
+      res.status(403).json({ error: "Invalid or expired token" });
+      return;
     }
   };
 };
